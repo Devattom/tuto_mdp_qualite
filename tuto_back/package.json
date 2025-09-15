@@ -1,0 +1,16 @@
+{
+  "name": "tuto_back",
+  "version": "1.0.0",
+  "description": "backside of the tuto",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mariadb": "^3.4.5",
+    "sequelize": "^6.37.7"
+  }
+}
