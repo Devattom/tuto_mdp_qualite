@@ -19,7 +19,6 @@ export class ListContact implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Contact>();
 
   ngOnInit(): void {
-    console.log(this.dataSource)
     this.contactService.getContacts().subscribe({
       next: (response) => {
         this.dataSource.data = response
@@ -34,5 +33,18 @@ export class ListContact implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  deleteContact(id: number): void {
+    if (!confirm(`Êtes-vous sur de vouloir supprimer le contact ${id} ?`)) {
+      return;
+    }
+
+    this.contactService.deleteContact(id).subscribe({
+      next: () => {
+        this.dataSource.data = this.dataSource.data.filter(contact => contact.id !== id)
+      },
+      error: (err) => console.error('Erreur lors de suppression du contact', err)
+    });
   }
 }
