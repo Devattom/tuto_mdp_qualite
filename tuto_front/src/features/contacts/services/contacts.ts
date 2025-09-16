@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
 import { Contact } from '../../../interface/Contact';
 import { ContactResponse } from '../../../interface/ContactResponse';
+import { DeleteResponse } from '../../../interface/DeleteResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -15,5 +16,9 @@ export class Contacts {
     return this.http.get<ContactResponse>(this.baseUrl).pipe(
       map(response => response.data)
     );
+  }
+
+  deleteContact(id: number): Observable<DeleteResponse> {
+    return this.http.delete<DeleteResponse>(this.baseUrl + '/' + id);
   }
 }
