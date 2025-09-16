@@ -4,11 +4,12 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import {MatIconModule} from '@angular/material/icon';
 import { Contact } from '../../../../interface/Contact';
 import { Contacts } from '../../services/contacts';
+import { DisplayFrenchNumberPipe } from '../../../../tools/pipes/display-french-number-pipe';
 
 
 @Component({
   selector: 'app-list-contact',
-  imports: [MatPaginatorModule, MatTableModule, MatIconModule],
+  imports: [MatPaginatorModule, MatTableModule, MatIconModule, DisplayFrenchNumberPipe],
   templateUrl: './list-contact.html',
   styleUrl: './list-contact.css'
 })
@@ -21,9 +22,7 @@ export class ListContact implements OnInit, AfterViewInit {
     console.log(this.dataSource)
     this.contactService.getContacts().subscribe({
       next: (response) => {
-        console.log(response)
         this.dataSource.data = response
-        console.log(this.dataSource) 
       },
       error: (err) => {
         console.error('Erreur lors de la récupération des contacts', err)
