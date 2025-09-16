@@ -1,5 +1,5 @@
 const express = require('express');
-const { Contact } = require('../db/sequelize');
+const { Contact } = require('../models/index');
 const router = express.Router()
 
 router.get('/contacts', (req, res) => {

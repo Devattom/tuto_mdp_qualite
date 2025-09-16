@@ -1,8 +1,7 @@
 const express = require('express')
 const app = express()
-const port = 3001
+const port = 3000
 const apiRoutes = require('./src/api/routes/contacts')
-const { Sequelize } = require('sequelize')
 
 
 app.use('/api', apiRoutes)
