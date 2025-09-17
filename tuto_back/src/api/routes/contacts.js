@@ -2,14 +2,15 @@ const express = require("express");
 const { Contact } = require("../models/index");
 const router = express.Router();
 const {
-  isValidPhoneNumber,
-  isValidEmail,
+  validatePhoneAndMail,
   sanitizePhone,
 } = require("../tools/validator");
 const { ValidationError } = require("sequelize");
 
 router.get("/contacts", (req, res) => {
-  Contact.findAll()
+  Contact.findAll({
+    order: [["id", "DESC"]],
+  })
     .then((contacts) => {
       res.json({ data: contacts });
     })
@@ -40,20 +41,16 @@ router.put("/contacts/:id", (req, res) => {
 
   delete updatedData.id;
 
-  if (!isValidPhoneNumber(updatedData.phone)) {
+  try {
+    validatePhoneAndMail(updatedData.phone, updatedData.email);
+  } catch(error) {
     return res
       .status(400)
-      .json({ message: "Le format du numéro de téléphone n'est pas correct" });
+      .json({ message: error.message });
   }
 
-  if (!isValidEmail(updatedData.email)) {
-    return res
-      .status(400)
-      .json({ message: "Le format du mail n'est pas correct" });
-  }
+  updatedData.phone = updatedData.phone ? sanitizePhone(updatedData.phone) : null;
 
-  updatedData.phone = sanitizePhone(updatedData.phone);
-  
   Contact.findByPk(contactId)
     .then((contact) => {
       if (!contact) {
@@ -65,7 +62,10 @@ router.put("/contacts/:id", (req, res) => {
           id: contactId,
         },
       }).then((_) => {
-        return res.json({ message: `Contact ${contactId} mis à jour !`, contact: {...updatedData, id: contactId} });
+        return res.json({
+          message: `Contact ${contactId} mis à jour !`,
+          contact: { ...updatedData, id: contactId },
+        });
       });
     })
     .catch((error) => {
@@ -76,6 +76,34 @@ router.put("/contacts/:id", (req, res) => {
       }
 
       return res.status(400).json({ message: "Bad Request", error: error });
+    });
+});
+
+router.post("/contacts", (req, res) => {
+  const contact = req.body;
+
+  try {
+    validatePhoneAndMail(contact.phone, contact.email);
+  } catch(error) {
+    return res
+      .status(400)
+      .json({ message: error.message });
+  }
+
+  contact.phone = contact.phone ? sanitizePhone(contact.phone) : null;
+
+  Contact.create(contact)
+    .then((newContact) => {
+      return res.json({
+        message: "Contact créer avec succés",
+        contact: newContact.dataValues,
+      });
+    })
+    .catch((error) => {
+      return res.status(400).json({
+        message: "Une erreur est survenue lors de la création",
+        error,
+      });
     });
 });
 
