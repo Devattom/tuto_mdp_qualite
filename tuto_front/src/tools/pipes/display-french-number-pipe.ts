@@ -11,9 +11,7 @@ export class DisplayFrenchNumberPipe implements PipeTransform {
 
     if (frenchNumberRegex.test(sanitizedNumber)) {
       const standardiseNumberRegex = /^(?:0033|\+33)/;
-      console.log('sani',sanitizedNumber)
       const standardisedNumber = sanitizedNumber.replace(standardiseNumberRegex, '0');
-      console.log('std', standardisedNumber)
       return standardisedNumber.replace(/(\d{2})(?=\d)/g, '$1 ').trim();
     }
       

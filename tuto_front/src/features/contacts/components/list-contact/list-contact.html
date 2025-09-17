@@ -1,4 +1,10 @@
 <h1>Liste des contacts</h1>
+<section class="create-contact">
+   <button (click)="openDialog(null)" matFab extended>
+        <mat-icon>add</mat-icon>
+        Ajouter un contact
+      </button>
+</section>
 <div class="mat-elevation-z8">
   <table mat-table [dataSource]="dataSource">
 

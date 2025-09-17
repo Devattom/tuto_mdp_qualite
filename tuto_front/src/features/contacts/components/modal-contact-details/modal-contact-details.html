@@ -1,5 +1,11 @@
 <div class="modal-contact-details">
-  <h2 mat-dialog-title>Détails contact Id :{{ data.id }}</h2>
+  <h2 mat-dialog-title>
+    @if(isCreation) {
+      Création d'un contact
+    } @else {
+       Détail du contact Id : {{ data.contact.id }}
+    }
+  </h2>
   <mat-dialog-content>
     <section>
       <div class="contactErrors">
@@ -41,6 +47,8 @@
   </mat-dialog-content>
   <mat-dialog-actions>
     <button matButton (click)="close()">Fermer</button>
-    <button matButton (click)="save()" cdkFocusInitial>Sauvegarder</button>
+    <button mat-button (click)="isCreation ? create() : save()" cdkFocusInitial>
+      {{ isCreation ? 'Créer' : 'Sauvegarder' }}
+    </button>
   </mat-dialog-actions>
 </div>

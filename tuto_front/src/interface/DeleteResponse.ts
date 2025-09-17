@@ -1,5 +1,5 @@
 export interface DeleteResponse {
-    data: {
-        message: string
-    }
+  data: {
+    message: string;
+  };
 }
