@@ -11,6 +11,7 @@ import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import { Contact } from '../../../../interface/Contact';
 import { Contacts } from '../../services/contacts';
+import { DialogContact } from '../../../../interface/DialogContact';
 
 
 @Component({
@@ -28,9 +29,10 @@ import { Contacts } from '../../services/contacts';
 })
 export class ModalContactDetails {
   readonly dialogRef = inject(MatDialogRef<ModalContactDetails>);
-  readonly data = inject<Contact>(MAT_DIALOG_DATA);
+  readonly data = inject<DialogContact>(MAT_DIALOG_DATA);
   private readonly contactService = inject(Contacts)
-  contact: Contact = { ...this.data };
+  contact: Contact = { ...this.data.contact };
+  isCreation: boolean = this.data.isCreation;
   contactErrors: string = '';
 
   close(): void {
@@ -38,20 +40,37 @@ export class ModalContactDetails {
   }
 
   save(): void {
-    console.log(this.contact);
-    
-    if (this.contact.lastname === '') {
-      this.contactErrors = 'Le nom est obligatoire'
+    if (!this.hasLastname(this.contact.lastname)) {
       return;
     }
 
     this.contactService.update(this.contact).subscribe({
       next: (response) => {
-        console.log(response.contact);
-        
         this.dialogRef.close(response.contact);
       },
       error: (error) => console.error('Erreur lors de la modification', error)
     });
+  }
+
+  create(): void {
+    if (!this.hasLastname(this.contact.lastname)) {
+      return;
+    }
+    
+    this.contactService.create(this.contact).subscribe({
+      next: (response) => {
+        this.dialogRef.close(response.contact);
+      },
+      error: (error) => console.error('Erreur lors de la création', error)
+    });
+  }
+
+  hasLastname(lastname: string) {
+    if (lastname === '') {
+      this.contactErrors = 'Le nom est obligatoire'
+      return false;
+    }
+
+    return true;
   }
 }

@@ -1,6 +1,6 @@
 import { Contact } from './Contact';
 
-export interface UpdateResponse {
+export interface CreateResponse {
   contact: Contact;
   message: string;
 }

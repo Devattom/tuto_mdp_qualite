@@ -7,10 +7,11 @@ import { Contacts } from '../../services/contacts';
 import { DisplayFrenchNumberPipe } from '../../../../tools/pipes/display-french-number-pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { ModalContactDetails } from '../modal-contact-details/modal-contact-details';
+import {MatButtonModule} from '@angular/material/button';
 
 @Component({
   selector: 'app-list-contact',
-  imports: [MatPaginatorModule, MatTableModule, MatIconModule, DisplayFrenchNumberPipe],
+  imports: [MatPaginatorModule, MatTableModule, MatIconModule, DisplayFrenchNumberPipe, MatButtonModule],
   templateUrl: './list-contact.html',
   styleUrl: './list-contact.css',
 })
@@ -62,17 +63,20 @@ export class ListContact implements OnInit, AfterViewInit {
     });
   }
 
-  openDialog(id: number): void {
-    const contact = this.dataSource.data.find(contact => contact.id === id);
+  openDialog(id: number | null): void {
+    const contact = id === null ? null : this.dataSource.data.find(contact => contact.id === id);
     const dialogRef = this.dialog.open(ModalContactDetails, {
       data: {
-        id: contact?.id,
-        lastname: contact?.lastname,
-        firstname: contact?.firstname,
-        company: contact?.company,
-        address: contact?.address,
-        phone: contact?.phone,
-        email: contact?.email
+        contact: {
+          id: contact?.id ?? null,
+          lastname: contact?.lastname ?? '',
+          firstname: contact?.firstname ?? '',
+          company: contact?.company ?? '',
+          address: contact?.address ?? '',
+          phone: contact?.phone ?? '',
+          email: contact?.email ?? '',
+        },
+        isCreation: id === null
       }
     });
 

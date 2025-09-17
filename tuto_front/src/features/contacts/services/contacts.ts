@@ -5,6 +5,7 @@ import { Contact } from '../../../interface/Contact';
 import { ContactResponse } from '../../../interface/ContactResponse';
 import { DeleteResponse } from '../../../interface/DeleteResponse';
 import { UpdateResponse } from '../../../interface/UpdateResponse';
+import { CreateResponse } from '../../../interface/CreateResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -25,5 +26,9 @@ export class Contacts {
 
   update(contact: Contact): Observable<UpdateResponse> {
     return this.http.put<UpdateResponse>(this.baseUrl + '/' + contact.id, contact);
+  }
+
+  create(contact: Contact): Observable<CreateResponse> {
+    return this.http.post<CreateResponse>(this.baseUrl, contact);
   }
 }
