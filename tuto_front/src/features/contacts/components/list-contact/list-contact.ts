@@ -59,10 +59,10 @@ export class ListContact implements OnInit, AfterViewInit {
   }
 
   openDialog(id: number): void {
-    console.log('open modal');
+    console.log('modal open');
     
     const contact = this.dataSource.data.find(contact => contact.id === id);
-    const dialogRef = this.dialog.open(ModalContactDetails, {
+    this.dialog.open(ModalContactDetails, {
       data: {
         id: contact?.id,
         lastname: contact?.lastname,
@@ -71,9 +71,7 @@ export class ListContact implements OnInit, AfterViewInit {
         address: contact?.address,
         phone: contact?.phone,
         email: contact?.email
-      },
-      width: '800px',
-      panelClass: 'custom-panel'
+      }
     });
   }
 }
