@@ -2,10 +2,15 @@
   <h2 mat-dialog-title>Détails contact Id :{{ data.id }}</h2>
   <mat-dialog-content>
     <section>
+      <div class="contactErrors">
+        @if(contactErrors) {
+          {{ contactErrors }}
+        }
+      </div>
       <div class="double-fields">
         <mat-form-field>
           <mat-label>Nom</mat-label>
-          <input matInput [(ngModel)]="contact.lastname" />
+          <input required matInput [(ngModel)]="contact.lastname" />
         </mat-form-field>
         <mat-form-field>
           <mat-label>Prénom</mat-label>
