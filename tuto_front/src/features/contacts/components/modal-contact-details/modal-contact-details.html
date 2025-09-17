@@ -1,0 +1,41 @@
+<div class="modal-contact-details">
+  <h2 mat-dialog-title>Détails contact Id :{{ data.id }}</h2>
+  <mat-dialog-content>
+    <section>
+      <div class="double-fields">
+        <mat-form-field>
+          <mat-label>Nom</mat-label>
+          <input matInput [(ngModel)]="contact.lastname" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Prénom</mat-label>
+          <input matInput [(ngModel)]="contact.firstname" />
+        </mat-form-field>
+      </div>
+      <mat-form-field>
+        <mat-label>Société</mat-label>
+        <input matInput [(ngModel)]="contact.company" />
+      </mat-form-field>
+      <div>
+        <mat-form-field class="address-field">
+          <mat-label>Adresse</mat-label>
+          <input matInput [(ngModel)]="contact.address" />
+        </mat-form-field>
+      </div>
+      <div class="double-fields">
+        <mat-form-field>
+          <mat-label>Téléphone</mat-label>
+          <input matInput [(ngModel)]="contact.phone" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="contact.email" />
+        </mat-form-field>
+      </div>
+    </section>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button matButton (click)="close()">Fermer</button>
+    <button matButton [mat-dialog-close]="save()" cdkFocusInitial>Sauvegarder</button>
+  </mat-dialog-actions>
+</div>
