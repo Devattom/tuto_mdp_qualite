@@ -31,14 +31,24 @@ export class ModalContactDetails {
   readonly data = inject<Contact>(MAT_DIALOG_DATA);
   private readonly contactService = inject(Contacts)
   contact: Contact = { ...this.data };
+  contactErrors: string = '';
 
   close(): void {
     this.dialogRef.close();
   }
 
   save(): void {
+    console.log(this.contact);
+    
+    if (this.contact.lastname === '') {
+      this.contactErrors = 'Le nom est obligatoire'
+      return;
+    }
+
     this.contactService.update(this.contact).subscribe({
       next: (response) => {
+        console.log(response.contact);
+        
         this.dialogRef.close(response.contact);
       },
       error: (error) => console.error('Erreur lors de la modification', error)

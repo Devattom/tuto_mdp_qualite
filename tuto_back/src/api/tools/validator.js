@@ -13,6 +13,11 @@ function isValidEmail(phone) {
 function sanitizePhone(phone) {
     let sanitizedNumber = phone.replace(/[\s\-\.]|\(0\)/g, '');
 
+    if (sanitizedNumber.startsWith('00')) {
+        return sanitizedNumber;
+    }
+
+    
     if (sanitizedNumber.startsWith('+')) {
         sanitizedNumber = sanitizedNumber.replace('+', '00');
     } else if (/^0\d{9}/.test(sanitizedNumber)) {
