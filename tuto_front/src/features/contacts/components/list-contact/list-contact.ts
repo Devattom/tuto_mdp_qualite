@@ -64,28 +64,33 @@ export class ListContact implements OnInit, AfterViewInit {
   }
 
   openDialog(id: number | null): void {
-    const contact = id === null ? null : this.dataSource.data.find(contact => contact.id === id);
+    const isCreation = id === null;
+    const contact = isCreation ? null : this.dataSource.data.find(contact => contact.id === id);
     const dialogRef = this.dialog.open(ModalContactDetails, {
       data: {
         contact: {
           id: contact?.id ?? null,
-          lastname: contact?.lastname ?? '',
-          firstname: contact?.firstname ?? '',
-          company: contact?.company ?? '',
-          address: contact?.address ?? '',
-          phone: contact?.phone ?? '',
-          email: contact?.email ?? '',
+          lastname: contact?.lastname ?? null,
+          firstname: contact?.firstname ?? null,
+          company: contact?.company ?? null,
+          address: contact?.address ?? null,
+          phone: contact?.phone ?? null,
+          email: contact?.email ?? null,
         },
-        isCreation: id === null
+        isCreation
       }
     });
 
     dialogRef.afterClosed().subscribe((updatedContact: Contact | undefined) => {
       if (updatedContact) {
-        const index = this.dataSource.data.findIndex(contact => contact.id === updatedContact.id);
-        if (index !== -1) {
-          this.dataSource.data[index] = updatedContact;
-          this.dataSource.data = [...this.dataSource.data]
+        if(isCreation) {
+          this.dataSource.data = [updatedContact, ...this.dataSource.data];
+        } else {
+          const index = this.dataSource.data.findIndex(contact => contact.id === updatedContact.id);
+          if (index !== -1) {
+            this.dataSource.data[index] = updatedContact;
+            this.dataSource.data = [...this.dataSource.data]
+          }
         }
       }
     })
