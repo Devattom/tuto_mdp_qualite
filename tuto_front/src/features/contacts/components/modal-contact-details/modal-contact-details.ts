@@ -39,6 +39,6 @@ export class ModalContactDetails {
 
   save(): void {
     console.log('save', this.contact);
-  
+    this.dialogRef.close();
   }
 }
