@@ -25,7 +25,7 @@ module.exports = (sequelize, Datatypes) => {
             type: Datatypes.STRING(20),
             allowNull: true,
             validate: {
-                is: /^\+?[1-9]\d{0,3}[\s.-]?\(?\d+\)?([\s.-]?\d+)*$/
+                is: /^00\d{8,15}$/
             }
         },
         email: {
