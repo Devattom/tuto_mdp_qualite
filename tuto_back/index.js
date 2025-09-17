@@ -5,6 +5,7 @@ const cors = require('cors')
 const apiRoutes = require('./src/api/routes/contacts')
 
 app.use(cors())
+app.use(express.json());
 app.use('/api', apiRoutes)
 
 app.listen(port, () => {

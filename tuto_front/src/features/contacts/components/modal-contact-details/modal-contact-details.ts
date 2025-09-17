@@ -1,9 +1,7 @@
-import { Component, inject, model } from '@angular/core';
+import { Component, EventEmitter, inject, model, Output } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
-  MatDialog,
   MatDialogActions,
-  MatDialogClose,
   MatDialogContent,
   MatDialogRef,
   MatDialogTitle,
@@ -12,6 +10,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {FormsModule} from '@angular/forms';
 import { Contact } from '../../../../interface/Contact';
+import { Contacts } from '../../services/contacts';
 
 
 @Component({
@@ -20,7 +19,6 @@ import { Contact } from '../../../../interface/Contact';
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
-    MatDialogClose,
     MatFormFieldModule,
     MatInputModule,
     FormsModule
@@ -31,6 +29,7 @@ import { Contact } from '../../../../interface/Contact';
 export class ModalContactDetails {
   readonly dialogRef = inject(MatDialogRef<ModalContactDetails>);
   readonly data = inject<Contact>(MAT_DIALOG_DATA);
+  private readonly contactService = inject(Contacts)
   contact: Contact = { ...this.data };
 
   close(): void {
@@ -38,7 +37,11 @@ export class ModalContactDetails {
   }
 
   save(): void {
-    console.log('save', this.contact);
-    this.dialogRef.close();
+    this.contactService.update(this.contact).subscribe({
+      next: (response) => {
+        this.dialogRef.close(response.contact);
+      },
+      error: (error) => console.error('Erreur lors de la modification', error)
+    });
   }
 }

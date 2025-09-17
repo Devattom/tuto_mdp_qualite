@@ -29,6 +29,16 @@ export class ListContact implements OnInit, AfterViewInit {
   dataSource = new MatTableDataSource<Contact>();
 
   ngOnInit(): void {
+    this.getContacts();
+  }
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  getContacts() {
     this.contactService.getContacts().subscribe({
       next: (response) => {
         this.dataSource.data = response;
@@ -37,12 +47,6 @@ export class ListContact implements OnInit, AfterViewInit {
         console.error('Erreur lors de la récupération des contacts', err);
       },
     });
-  }
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
   }
 
   deleteContact(id: number): void {
@@ -59,10 +63,8 @@ export class ListContact implements OnInit, AfterViewInit {
   }
 
   openDialog(id: number): void {
-    console.log('modal open');
-    
     const contact = this.dataSource.data.find(contact => contact.id === id);
-    this.dialog.open(ModalContactDetails, {
+    const dialogRef = this.dialog.open(ModalContactDetails, {
       data: {
         id: contact?.id,
         lastname: contact?.lastname,
@@ -73,5 +75,15 @@ export class ListContact implements OnInit, AfterViewInit {
         email: contact?.email
       }
     });
+
+    dialogRef.afterClosed().subscribe((updatedContact: Contact | undefined) => {
+      if (updatedContact) {
+        const index = this.dataSource.data.findIndex(contact => contact.id === updatedContact.id);
+        if (index !== -1) {
+          this.dataSource.data[index] = updatedContact;
+          this.dataSource.data = [...this.dataSource.data]
+        }
+      }
+    })
   }
 }

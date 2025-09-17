@@ -4,6 +4,7 @@ import { map, Observable, tap } from 'rxjs';
 import { Contact } from '../../../interface/Contact';
 import { ContactResponse } from '../../../interface/ContactResponse';
 import { DeleteResponse } from '../../../interface/DeleteResponse';
+import { UpdateResponse } from '../../../interface/UpdateResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +21,9 @@ export class Contacts {
 
   deleteContact(id: number): Observable<DeleteResponse> {
     return this.http.delete<DeleteResponse>(this.baseUrl + '/' + id);
+  }
+
+  update(contact: Contact): Observable<UpdateResponse> {
+    return this.http.put<UpdateResponse>(this.baseUrl + '/' + contact.id, contact);
   }
 }
