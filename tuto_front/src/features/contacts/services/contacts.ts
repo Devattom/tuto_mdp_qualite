@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
 import { map, Observable, tap } from 'rxjs';
 import { Contact } from '../../../interface/Contact';
@@ -14,8 +14,14 @@ export class Contacts {
   private http = inject(HttpClient);
   private readonly baseUrl = 'http://localhost:3000/api/contacts'
 
-  getContacts(): Observable<Contact[]> {
-    return this.http.get<ContactResponse>(this.baseUrl).pipe(
+  getContacts(search: string|null = null): Observable<Contact[]> {
+    let params = new HttpParams();
+
+    if (search !== null) {
+      params = params.set('lastname', search);
+    }
+    
+    return this.http.get<ContactResponse>(this.baseUrl, { params }).pipe(
       map(response => response.data)
     );
   }

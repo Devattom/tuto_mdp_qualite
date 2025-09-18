@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,14 +8,27 @@ import { DisplayFrenchNumberPipe } from '../../../../tools/pipes/display-french-
 import { MatDialog } from '@angular/material/dialog';
 import { ModalContactDetails } from '../modal-contact-details/modal-contact-details';
 import {MatButtonModule} from '@angular/material/button';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { debounceTime, Subscription, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-list-contact',
-  imports: [MatPaginatorModule, MatTableModule, MatIconModule, DisplayFrenchNumberPipe, MatButtonModule],
+  imports: [
+    MatPaginatorModule,
+    MatTableModule,
+    MatIconModule,
+    DisplayFrenchNumberPipe,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule
+  ],
   templateUrl: './list-contact.html',
   styleUrl: './list-contact.css',
 })
-export class ListContact implements OnInit, AfterViewInit {
+export class ListContact implements OnInit, AfterViewInit, OnDestroy {
   private readonly contactService = inject(Contacts);
   readonly dialog = inject(MatDialog);
   displayedColumns: string[] = [
@@ -29,11 +42,30 @@ export class ListContact implements OnInit, AfterViewInit {
   ];
   dataSource = new MatTableDataSource<Contact>();
 
-  ngOnInit(): void {
-    this.getContacts();
-  }
+  searchInput = new FormControl('');
+  private searchSubscription!: Subscription;
+
+  private search$ = this.searchInput.valueChanges.pipe(
+    debounceTime(1000),
+    switchMap(value => this.contactService.getContacts(value))
+  );
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  ngOnInit(): void {
+    this.getContacts();
+
+    this.searchSubscription = this.search$.subscribe(value => {
+      console.log('recherche', value);
+      
+    })
+  }
+
+  ngOnDestroy(): void {
+    if (this.searchSubscription) {
+      this.searchSubscription.unsubscribe();
+    }
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
