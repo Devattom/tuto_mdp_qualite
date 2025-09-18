@@ -12,3 +12,11 @@
   display: flex;
   gap: 25px
 }
+
+.mat-mdc-cell button {
+  cursor: pointer;
+}
+
+.mat-mdc-cell button:first-child {
+  margin-right: 10px;
+}

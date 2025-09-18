@@ -6,10 +6,23 @@ const {
   sanitizePhone,
 } = require("../tools/validator");
 const { ValidationError } = require("sequelize");
+const { Op } = require('sequelize')
 
 router.get("/contacts", (req, res) => {
+  const lastnameFilter = req.query.lastname;
+  let whereClause = {};
+
+  if (lastnameFilter) {
+    whereClause = {
+      lastname: {
+        [Op.like]: `${lastnameFilter}%`
+      }
+    }
+  }
+
   Contact.findAll({
-    order: [["id", "DESC"]],
+    order: lastnameFilter ? [] : [["id", "DESC"]],
+    where: whereClause
   })
     .then((contacts) => {
       res.json({ data: contacts });
