@@ -7,3 +7,8 @@
 .mat-mdc-row:hover .mat-mdc-cell {
   background-color: antiquewhite;
 }
+
+.actions-contact {
+  display: flex;
+  gap: 25px
+}
