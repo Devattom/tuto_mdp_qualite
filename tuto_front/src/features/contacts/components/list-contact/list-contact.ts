@@ -11,7 +11,7 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { debounceTime, Subscription, switchMap } from 'rxjs';
+import { debounceTime, startWith, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-list-contact',
@@ -28,7 +28,7 @@ import { debounceTime, Subscription, switchMap } from 'rxjs';
   templateUrl: './list-contact.html',
   styleUrl: './list-contact.css',
 })
-export class ListContact implements OnInit, AfterViewInit, OnDestroy {
+export class ListContact implements OnInit, AfterViewInit {
   private readonly contactService = inject(Contacts);
   readonly dialog = inject(MatDialog);
   displayedColumns: string[] = [
@@ -43,9 +43,9 @@ export class ListContact implements OnInit, AfterViewInit, OnDestroy {
   dataSource = new MatTableDataSource<Contact>();
 
   searchInput = new FormControl('');
-  private searchSubscription!: Subscription;
 
-  private search$ = this.searchInput.valueChanges.pipe(
+  private contacts$ = this.searchInput.valueChanges.pipe(
+    startWith(''),
     debounceTime(1000),
     switchMap(value => this.contactService.getContacts(value))
   );
@@ -53,33 +53,14 @@ export class ListContact implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   ngOnInit(): void {
-    this.getContacts();
-
-    this.searchSubscription = this.search$.subscribe(value => {
-      console.log('recherche', value);
-      
-    })
-  }
-
-  ngOnDestroy(): void {
-    if (this.searchSubscription) {
-      this.searchSubscription.unsubscribe();
-    }
+    this.contacts$.subscribe({
+      next: contacts =>this.dataSource.data = contacts,
+      error: error => console.error('Erreur lors de la récupération des contacts', error)
+    });
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
-  }
-
-  getContacts() {
-    this.contactService.getContacts().subscribe({
-      next: (response) => {
-        this.dataSource.data = response;
-      },
-      error: (err) => {
-        console.error('Erreur lors de la récupération des contacts', err);
-      },
-    });
   }
 
   deleteContact(id: number): void {
@@ -88,10 +69,8 @@ export class ListContact implements OnInit, AfterViewInit, OnDestroy {
     }
 
     this.contactService.deleteContact(id).subscribe({
-      next: () => {
-        this.dataSource.data = this.dataSource.data.filter((contact) => contact.id !== id);
-      },
-      error: (err) => console.error('Erreur lors de suppression du contact', err),
+      next: () => this.dataSource.data = this.dataSource.data.filter((contact) => contact.id !== id),
+      error: error => console.error('Erreur lors de suppression du contact', error),
     });
   }
 
